@@ -5,6 +5,7 @@ import pickle as pkl
 import ccxt
 import matplotlib.pyplot as plt
 from datetime import datetime
+import time
 
 market = ['BTC/USD','LTC/BTC']
 def getCCXTData(market):
@@ -46,11 +47,60 @@ os.remove('LTC-BTC.csv')
 x = df.Time
 y1 =df.USD 
 y2 =df.LTC
-plt.plot(x,y1/100, "b-" , label = '$USD/100$') # Setting up legends
-plt.plot(x,y2, "r-" ,label ='$LTC$') # Setting up legends
-plt.xlabel("TIME")
-plt.ylabel("1 BTC vaut :")
-plt.title("$Evolution $ $ BTC $ $ en $ $fonction$ $de$ $LTC$ $et$ $USD$" ,fontsize = 14)
-plt.legend()
-plt.tight_layout()   
-df.set_index(['Time','USD','LTC'])
+a = int(input("veuillez saisir le numero de l'operation voulu \n 1/voir l'evolution du bitcoin aujourd'hui\t  2/convertir une devise \n "))
+assert a in {1,2} ,"veuillez saisir un 1 ou un 2 !!"
+if (a==1):
+    plt.plot(x,y1/100, "b-" , label = '$USD/100$') # Setting up legends
+    plt.plot(x,y2, "r-" ,label ='$LTC$') # Setting up legends
+    plt.xlabel("TIME")
+    plt.ylabel("1 BTC vaut :")
+    plt.title("$Evolution $ $ BTC $ $ en $ $fonction$ $de$ $LTC$ $et$ $USD$" ,fontsize = 14)
+    plt.legend()
+    plt.tight_layout()
+    print("le tableau presentant l'evolution d'un BTC dans les 6 min prochaines \n" ,df.set_index('Time').head(6))
+elif(a==2):
+        time =time.strftime('%H:%M:00', time.localtime()) 
+        data_extra=df.loc([x for x in df['Time']] == time)
+        val_usd=data_extra[2][1]
+        val_ltc=data_extra[3][2]
+        b=str(input("veuillez saisir la device a convertir   :    USD   LTC   BTC \n"))
+        assert b in {'USD','LTC','BTC'},"ERROR"
+        c=float(input("veuillez saisir la valeur de la somme a convertir   "))
+        d=str(input("veuillez saisir la device voulue   :    USD   LTC   BTC \n"))
+        assert d in {'USD','BTC','LTC'},'ERROR'
+        if (b=='BTC'):
+            if (d=='USD'):
+                print (c," ",b,"="," ",c*(val_usd)," ",d )
+            elif (d=='LTC'):
+                print (c," ",b,"="," ",c*(val_ltc)," ",d )
+            else:
+                print (c," ",b,"="," ",c," ",d )  
+        elif(b=='LTC'):
+            if (d=='BTC'):
+                print (c," ",b,"="," ",c*(1/(val_ltc))," ",d )
+            elif(d=='USD'):
+                print (c," ",b,"="," ",c*(val_usd/val_ltc)," ",d )
+            else:
+                print (c," ",b,"="," ",c," ",d )
+        else:
+            if (d=='BTC'):
+                print (c," ",b,"="," ",c*(1/val_usd)," ",d )
+            elif(d=='LTC'):
+                print (c," ",b,"="," ",c*(val_ltc/val_usd)," ",d )
+            else:
+                print (c," ",b,"="," ",c," ",d )      
+
+            
+            
+
+
+                
+                
+        
+        
+        
+
+
+
+
+
